@@ -121,6 +121,8 @@ bool Server::checkNickCollision( std::string nickTested )
 
 void Server::clientRegistration( std::string command, Client & myClient )
 {
+	if (this->_pass == "")
+		myClient.setIsPasswordValid(true);
 	/* first command must be CAP or PASS otherwise ERR_PASSWDMISMATCH */
 	if (command.compare(0, 4, "CAP ") && command.compare(0, 5, "PASS ") && myClient.getIsPasswordValid() == false)
 	{
