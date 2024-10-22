@@ -187,7 +187,7 @@ std::string	modestring_maker(Channel channel)
 
 std::string only_good_chars(std::string &modes)
 {
-	std::string good_chars = "tkil+-";
+	std::string good_chars = "tkoil+-";
 	std::string new_modes = "";
 	for (std::size_t i = 0; i < modes.length(); i++)
 	{
