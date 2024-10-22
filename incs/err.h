@@ -3,7 +3,7 @@
 
 # define ERR_NOSUCHCHANNEL(nick, channel)			        ":localhost 403 " + nick + " " + channel + " :No such channel\r\n"
 # define ERR_ERRONEUSNICKNAME(nick)					        ":localhost 432 * " + nick + " :Erroneous Nickname\r\n"
-# define ERR_NICKCOLLISION(nick)						":localhost 436 " + nick + " :Nickname collision\r\n"
+# define ERR_NICKCOLLISION(nick)							":localhost 436 " + nick + " :Nickname collision KILL from jle@localhost\r\n"
 # define ERR_USERNOTINCHANNEL(nick, kick, channel)	        ":localhost 441 " + nick + " " + kick + " " + channel + " :They aren't on that channel\r\n"
 # define ERR_NOTONCHANNEL(nick, channel)			        ":localhost 442 " + nick + " " + channel + " :You're not on that channel\r\n"
 # define ERR_NEEDMOREPARAMS(nick, command)			        ":localhost 461 " + nick + " " + command + " :Not enough parameters\r\n"
