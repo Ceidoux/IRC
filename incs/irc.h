@@ -38,5 +38,7 @@ class Server;
 class Client;
 
 void	writeRPL( int fd, std::string RPL );
+std::string	allNicks( Channel & channel );
+std::string	prefixIfOperator( Client & client, Channel & channel );
 
 #endif

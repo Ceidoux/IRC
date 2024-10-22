@@ -79,6 +79,10 @@ int	setmode(std::vector<Channel> &channels, std::string &channel, std::string mo
 			}
 			channels[i].addOperator(channels[i].getClients()[j]);
 			arguments = arguments.substr(arguments.find(" ") + 1);
+			// std::string full_nick = prefixIfOperator(*channels[i].getClients()[j], channels[i]) + channels[i].getClients()[j]->getNick();
+			// full_nick += channels[i].getClients()[j]->getNick();
+			// //RPL NAMES
+			// writeRPL(channels[i].getClients()[j]->getFd(), RPL_NAMREPLY(channels[i].getClients()[j]->getNick(), channel, full_nick));
 			std::cout << "operatorNick: " << operatorNick << std::endl;
 		}
 		else
@@ -110,6 +114,7 @@ int	setmode(std::vector<Channel> &channels, std::string &channel, std::string mo
 			}
 			channels[i].removeOperator(channels[i].getClients()[j]);
 			arguments = arguments.substr(arguments.find(" ") + 1);
+			// writeRPL(channels[i].getClients()[j]->getFd(), RPL_NAMREPLY(channels[i].getClients()[j]->getNick(), channel, allNicks(channels[i])));
 			std::cout << "operatorNick: " << operatorNick << std::endl;
 		}
 	}
@@ -220,6 +225,30 @@ void	Server::mode( std::string line, Client & client )
 				writeRPL(client.getFd(), RPL_CHANNELMODEIS(client.getNick(), channel, modestring));
 				std::cout << "modestring: " << modestring << std::endl;
 				return;
+			}
+		}
+	}
+	for (std::size_t i = 0; i < this->_channels.size(); i++)
+	{
+		if (this->_channels[i].getName() == channel)
+		{
+			if (this->_channels[i].getOperators().size() == 0)
+			{
+					writeRPL(client.getFd(), ERR_CHANOPRIVSNEEDED(client.getNick(), channel));
+					return;
+			}
+			for (std::size_t j = 0; j < this->_channels[i].getOperators().size(); j++)
+			{
+				if (this->_channels[i].getOperators()[j]->getNick() == client.getNick())
+				{
+					std::cout << "Client is an operator" << std::endl;
+					break;
+				}
+				if (j == this->_channels[i].getOperators().size() - 1)
+				{
+					writeRPL(client.getFd(), ERR_CHANOPRIVSNEEDED(client.getNick(), channel));
+					return;
+				}
 			}
 		}
 	}

@@ -18,7 +18,7 @@ static	std::vector <Channel> createChannelList( std::string line )
 	return channelList;
 }
 
-static std::string	prefixIfOperator( Client & client, Channel & channel )
+std::string	prefixIfOperator( Client & client, Channel & channel )
 {
 	for (std::size_t i = 0; i < channel.getOperators().size(); i++)
 	{
@@ -30,7 +30,7 @@ static std::string	prefixIfOperator( Client & client, Channel & channel )
 	return ("");
 }
 
-static std::string	allNicks( Channel & channel )
+std::string	allNicks( Channel & channel )
 {
 	std::string	allNIcks("");
 
