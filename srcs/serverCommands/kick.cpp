@@ -88,6 +88,11 @@ void	Server::kick( std::string line, Client & client )
 					for (std::size_t k = 0; k < this->_channels[i].getClients().size(); k++)
 						writeRPL(this->_channels[i].getClients()[k]->getFd(), RPL_KICK);
 					this->_channels[i].removeClient(this->_channels[i].getClients()[j]);
+					if (this->_channels[i].getNumberOfClients() == 0)
+					{
+						this->_channels.erase(this->_channels.begin() + i);
+						std::cout << this->_channels[i].getName() << " was removed (no client left)" << std::endl;
+					}
 					break;
 				}
 			}

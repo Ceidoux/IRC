@@ -26,6 +26,7 @@ void    Channel::addClient(Client * added_client)
         this->clients.push_back(added_client);
     else
         std::cout << "Client already in channel" << std::endl;
+    std::cout << "Nb of clients: " << this->getNumberOfClients() << std::endl;
 }
 
 void    Channel::removeClient(Client * removed_client)
@@ -37,6 +38,7 @@ void    Channel::removeClient(Client * removed_client)
     }
     else
         std::cout << "Client not in channel" << std::endl;
+    std::cout << "Nb of clients: " << this->getNumberOfClients() << std::endl;
 }
 
 void    Channel::removeOperator(Client * removed_operator)
@@ -175,4 +177,9 @@ std::string    Channel::getKey()
 std::string            Channel::getUserLimit()
 {
     return this->_userLimit;
+}
+
+size_t     Channel::getNumberOfClients( void ) const
+{
+    return this->clients.size();
 }
