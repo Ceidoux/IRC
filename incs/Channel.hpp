@@ -28,10 +28,10 @@ class Channel
         void    banClient(Client * banned_client);
         void    addInvitedClient(Client * invited_client);
         void    removeOperator(Client * removed_operator);
-        std::vector<Client *>    getOperators();
+        std::vector<Client *> getOperators();
         std::vector<Client *> getClients();
         std::vector<Client *> getInvitedClients();
-        void setTopic(std::string topic);
+        void    setTopic(std::string topic);
         void    setMode_i(bool status);
         void    setMode_t(bool status);
         void    setMode_k(bool status);
@@ -47,7 +47,7 @@ class Channel
         bool    getMode_o();
         bool    getMode_l();
         std::string    getKey();
-        std::string            getUserLimit();
+        std::string    getUserLimit();
     private:
         Channel();
         std::vector<Client *> clients;

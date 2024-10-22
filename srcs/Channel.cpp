@@ -31,7 +31,10 @@ void    Channel::addClient(Client * added_client)
 void    Channel::removeClient(Client * removed_client)
 {
     if (std::find(this->clients.begin(), this->clients.end(), removed_client) != this->clients.end())
+    {   
+        this->removeOperator(removed_client);
         this->clients.erase(std::remove(this->clients.begin(), this->clients.end(), removed_client), this->clients.end());
+    }
     else
         std::cout << "Client not in channel" << std::endl;
 }
