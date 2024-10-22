@@ -13,4 +13,6 @@
 # define RPL_ENDOFNAMES(nick, channel)			":localhost 366 " + nick + " " + channel + " :End of /NAMES list.\r\n"
 # define RPL_CHANNELMODEIS(nick, channel, mode)	":localhost 324 " + nick + " " + channel + " " + mode + "\r\n"
 
+# define RPL_KILL(nick, msg)					"kill " + nick + " :" + msg + "\r\n"
+
 #endif

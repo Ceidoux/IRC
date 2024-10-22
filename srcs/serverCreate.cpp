@@ -102,7 +102,7 @@ void Server::readFromClient( int i )
 			if (this->_clients[i].getIsRegistered() == true)
 				this->command(command, this->_clients[i]);
 			else
-				clientRegistration(command, this->_clients[i]);
+				clientRegistration(command, this->_clients[i], i);
 		}
 	}
 }
@@ -119,7 +119,7 @@ bool Server::checkNickCollision( std::string nickTested )
 	return false;
 }
 
-void Server::clientRegistration( std::string command, Client & myClient )
+void Server::clientRegistration( std::string command, Client & myClient, int clientIdx )
 {
 	if (this->_pass == "")
 		myClient.setIsPasswordValid(true);
@@ -136,7 +136,13 @@ void Server::clientRegistration( std::string command, Client & myClient )
 		if (!myClient.validNick(command.substr(5)))
 			writeRPL(myClient.getFd(), ERR_ERRONEUSNICKNAME(command.substr(5)));
 		else if (checkNickCollision(command.substr(5)))
+		{
 			writeRPL(myClient.getFd(), ERR_NICKCOLLISION(command.substr(5)));
+			writeRPL(myClient.getFd(), RPL_KILL(command.substr(5), "make sure to change your nick"));
+			myClient.eraseAttributes();
+			close(this->_fds[clientIdx].fd);
+			this->_fds[clientIdx].fd = 0;
+		}
 		else
 			myClient.setNick(command.substr(5));
 	}

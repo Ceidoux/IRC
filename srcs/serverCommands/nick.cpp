@@ -4,7 +4,9 @@ void	Server::nick( std::string line, Client & client )
 {
 	std::string newNick = line.substr(line.find("NICK") + 5);
 	
-	if (!client.validNick(newNick))
+	if (newNick == "")
+		writeRPL(client.getFd(), "No nickname given\r\n");
+	else if (!client.validNick(newNick))
 		writeRPL(client.getFd(), ERR_ERRONEUSNICKNAME(newNick));
 	else if (checkNickCollision(newNick))
 		writeRPL(client.getFd(), ERR_NICKCOLLISION(newNick));

@@ -18,7 +18,7 @@ public:
 	struct pollfd * getfd0addr( void ) const;
 	int getnfds( void ) const;
 
-	void clientRegistration( std::string command, Client & myClient );
+	void clientRegistration( std::string command, Client & myClient, int clientIdx );
 
 	class WrongPortException: public std::exception
 	{
