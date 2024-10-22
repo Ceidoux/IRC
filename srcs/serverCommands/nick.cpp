@@ -5,11 +5,11 @@ void	Server::nick( std::string line, Client & client )
 	std::string newNick = line.substr(line.find("NICK") + 5);
 	
 	if (newNick == "")
-		writeRPL(client.getFd(), "No nickname given\r\n");
+		writeRPL(client.getFd(), ERR_NONICKNAMEGIVEN);
 	else if (!client.validNick(newNick))
 		writeRPL(client.getFd(), ERR_ERRONEUSNICKNAME(newNick));
 	else if (checkNickCollision(newNick))
-		writeRPL(client.getFd(), ERR_NICKCOLLISION(newNick));
+		writeRPL(client.getFd(), ERR_NICKNAMEINUSE(newNick));
 	else
 	{
 		std::string RPL_NICK = ":" + client.getNick() + "!" + client.getUser() + "@" + "localhost" + " NICK :" + newNick + "\r\n";
