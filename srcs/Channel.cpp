@@ -174,12 +174,12 @@ std::string    Channel::getKey()
     return this->_key;
 }
 
-std::string            Channel::getUserLimit()
+std::string Channel::getUserLimit()
 {
     return this->_userLimit;
 }
 
-size_t     Channel::getNumberOfClients( void ) const
+std::size_t Channel::getNumberOfClients( void ) const
 {
     return this->clients.size();
 }

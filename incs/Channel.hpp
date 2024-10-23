@@ -48,7 +48,7 @@ class Channel
         bool    getMode_l();
         std::string    getKey();
         std::string    getUserLimit();
-        size_t         getNumberOfClients( void ) const;
+        std::size_t         getNumberOfClients( void ) const;
     private:
         Channel();
         std::vector<Client *> clients;

@@ -2,6 +2,8 @@
 
 void	Server::privmsg( std::string line, Client & client )
 {
+	std::size_t	i(0);
+
 	// if there is a # after PRIVMSG, it means it is a channel message
 	if (line[8] && line[8] == '#')
 	{
@@ -20,17 +22,20 @@ void	Server::privmsg( std::string line, Client & client )
 			}
 		}
 	}
-	// else
-	// {
-	// 	std::string recipient = line.substr(line.find(" ") + 1, line.find(" ", line.find(" ") + 1) - line.find(" ") - 1);
-	// 	std::string message = line.substr(line.find(":", line.find(" ")) + 1);
-	// 	std::string RPL_PRIVMSG = ":" + client.getNick() + "!" + client.getUser() + "@" + "localhost" + " PRIVMSG " + recipient + " :" + message + "\r\n";
-	// 	for (int i = 0; i < this->_clients.size(); i++)
-	// 	{
-	// 		if (this->_clients[i].getNick() == recipient)
-	// 		{
-	// 			write(this->_clients[i].getFd(), RPL_PRIVMSG.c_str(), RPL_PRIVMSG.length());
-	// 		}
-	// 	}
-	// }
+	else
+	{
+		std::string recipient = line.substr(line.find(" ") + 1, line.find(" ", line.find(" ") + 1) - line.find(" ") - 1);
+		std::string message = line.substr(line.find(":", line.find(" ")) + 1);
+		std::string RPL_PRIVMSG = ":" + client.getNick() + "!" + client.getUser() + "@" + "localhost" + " PRIVMSG " + recipient + " :" + message + "\r\n";
+		for (i = 0; i < this->_clients.size(); i++)
+		{
+			if (this->_clients[i].getNick() == recipient)
+			{
+				write(this->_clients[i].getFd(), RPL_PRIVMSG.c_str(), RPL_PRIVMSG.length());
+				break;
+			}
+		}
+		if (i == this->_clients.size())
+			writeRPL(client.getFd(), ERR_NOSUCHNICK(client.getNick()));
+	}
 }
