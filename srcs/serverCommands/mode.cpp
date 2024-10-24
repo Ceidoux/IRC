@@ -1,6 +1,16 @@
 # include "../../incs/irc.h"
 
-int	setmode(std::vector<Channel> &channels, std::string &channel, std::string mode, bool &status, std::string &arguments, std::string &initial_arguments)
+bool not_digit(std::string str)
+{
+	for (std::size_t i = 0; i < str.length(); i++)
+	{
+		if (!isdigit(str[i]))
+			return true;
+	}
+	return false;
+}
+
+int	setmode(std::vector<Channel> &channels, std::string &channel, std::string mode, bool &status, std::string &arguments, std::string &initial_arguments, Client & client)
 {
 	std::size_t i = 0;
 	while (i < channels.size())
@@ -79,6 +89,12 @@ int	setmode(std::vector<Channel> &channels, std::string &channel, std::string mo
 			}
 			channels[i].addOperator(channels[i].getClients()[j]);
 			arguments = arguments.substr(arguments.find(" ") + 1);
+			//sending MODE RPL back to client
+			for (std::size_t k = 0; k < channels[i].getClients().size(); k++)
+			{
+				std::string modeMessage = ":" + client.getNick() + " MODE " + channel + " +o " + operatorNick + "\r\n";
+				writeRPL(channels[i].getClients()[k]->getFd(), modeMessage);
+			}
 			// std::string full_nick = prefixIfOperator(*channels[i].getClients()[j], channels[i]) + channels[i].getClients()[j]->getNick();
 			// full_nick += channels[i].getClients()[j]->getNick();
 			// //RPL NAMES
@@ -114,6 +130,12 @@ int	setmode(std::vector<Channel> &channels, std::string &channel, std::string mo
 			}
 			channels[i].removeOperator(channels[i].getClients()[j]);
 			arguments = arguments.substr(arguments.find(" ") + 1);
+			//sending MODE RPL back to client
+			for (std::size_t k = 0; k < channels[i].getClients().size(); k++)
+			{
+				std::string modeMessage = ":" + client.getNick() + " MODE " + channel + " -o " + operatorNick + "\r\n";
+				writeRPL(channels[i].getClients()[k]->getFd(), modeMessage);
+			}
 			// writeRPL(channels[i].getClients()[j]->getFd(), RPL_NAMREPLY(channels[i].getClients()[j]->getNick(), channel, allNicks(channels[i])));
 			std::cout << "operatorNick: " << operatorNick << std::endl;
 		}
@@ -129,6 +151,11 @@ int	setmode(std::vector<Channel> &channels, std::string &channel, std::string mo
 		else
 		{
 			std::string userLimit = arguments.substr(0, arguments.find(" "));
+			if (not_digit(userLimit))
+			{
+				std::cout << "Invalid user limit" << std::endl;
+				return (1);
+			}
 			channels[i].setUserLimit(userLimit);
 			initial_arguments += userLimit;
 			if (arguments.find(" ") != std::string::npos)
@@ -201,7 +228,31 @@ std::string only_good_chars(std::string &modes)
 	}
 	return new_modes;
 }
+bool no_modes(std::string modes)
+{
+	if (modes.length() == 0)
+		return true;
+	for (std::size_t i = 0; i < modes.length(); i++)
+	{
+		if (modes[i] != '+' && modes[i] != '-')
+			return false;
+	}
+	return true;
+}
 
+std::string only_channel_chars(std::string &modes)
+{
+	std::string good_chars = "tkil+-";
+	std::string new_modes = "";
+	for (std::size_t i = 0; i < modes.length(); i++)
+	{
+		if (good_chars.find(modes[i]) != std::string::npos && new_modes.find(modes[i]) == std::string::npos)
+			new_modes += modes[i];
+	}
+	if (no_modes(new_modes))
+		new_modes = "";
+	return new_modes;
+}
 
 void	Server::mode( std::string line, Client & client )
 {
@@ -210,6 +261,13 @@ void	Server::mode( std::string line, Client & client )
 	{
 		std::string client_nick = line.substr(line.find(" ") + 1, line.find(" ", line.find(" ") + 1) - line.find(" ") - 1);
 		std::string modes = line.substr(line.find(" ", line.find(" ") + 1) + 1);
+		// if (modes == line)
+		// {
+		// 	modes = "";
+		// 	//UMODEIS
+		// 	writeRPL(client.getFd(), RPL_UMODEIS(client_nick, "+o"));
+		// 	return;
+		// }
 		std::cout << "Here is the client: " << client_nick << std::endl;
 		std::cout << "Here is the modes: " << modes << std::endl;
 		return;
@@ -283,7 +341,7 @@ void	Server::mode( std::string line, Client & client )
 			status = false;
 		else
 		{
-			flag = setmode(this->_channels, channel, std::string(1, modes[i]), status, arguments, initial_arguments);
+			flag = setmode(this->_channels, channel, std::string(1, modes[i]), status, arguments, initial_arguments, client);
 			if (flag == 1)
 			{
 				writeRPL(client.getFd(), ERR_INVALIDMODEPARAM(client.getNick(), channel, "+" + std::string(1, modes[i]), arguments));
@@ -292,6 +350,9 @@ void	Server::mode( std::string line, Client & client )
 		}
 	}
 	std::cout << "Initial arguments: " << initial_arguments << std::endl;
+	modes = only_channel_chars(modes);
+	if (modes == "")
+		return;
 	std::string modeMessage = ":" + client.getNick() + "!" + client.getUser() + "@localhost MODE " + channel + " " + modes + " " + initial_arguments + "\r\n";
 	for (std::size_t i = 0; i < this->_channels.size(); i++)
 	{

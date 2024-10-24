@@ -48,7 +48,7 @@ void	Server::invite( std::string line, Client & client )
 			{
 				if (this->_channels[i].getClients()[j]->getNick() == invitedNick)
 				{
-					writeRPL(client.getFd(), ERR_USERONCHANNEL(client.getNick(), channel));
+					writeRPL(client.getFd(), ERR_USERONCHANNEL(channel, invitedNick));
 					return;
 				}
 			}
