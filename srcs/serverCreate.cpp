@@ -54,6 +54,8 @@ void	Server::acceptClient( void )
 	struct sockaddr_in	client_addr;
 	socklen_t			client_addr_size;
 
+	std::memset(&client, 0, sizeof(client));
+	std::memset(&client_addr, 0, sizeof(client_addr));
 	client_addr_size = sizeof(client_addr);
 	client.fd = accept(this->_fds[0].fd, (struct sockaddr*)&client_addr, &client_addr_size);
 	if (client.fd == -1)
