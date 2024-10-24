@@ -102,7 +102,6 @@ void	Server::join( std::string line, Client & client )
 					writeRPL(this->_channels[j].getClients()[k]->getFd(), RPL_JOIN(client.getNick(), client.getUser(), channelList[i].getName()));
 					if (!channelExists)
 						this->_channels[j].setTopic("No topic is set");
-					writeRPL(this->_channels[j].getClients()[k]->getFd(), RPL_TOPIC(client.getNick(), channelList[i].getName(), this->_channels[j].getTopic())); // message de reponse au client indiquant le topic du channel.
 				}
 			}
 		}
@@ -113,8 +112,12 @@ void	Server::join( std::string line, Client & client )
 			{
 				for (std::size_t n = 0; n < this->_channels[m].getClients().size(); n++)
 				{
-					writeRPL(this->_channels[m].getClients()[n]->getFd(), RPL_NAMREPLY(client.getNick(), this->_channels[m].getName(), allNicks(this->_channels[m])));
-					writeRPL(this->_channels[m].getClients()[n]->getFd(), RPL_ENDOFNAMES(client.getNick(), channelList[i].getName()));
+					if (this->_channels[m].getClients()[n]->getNick() == client.getNick())
+					{
+						writeRPL(this->_channels[m].getClients()[n]->getFd(), RPL_TOPIC(client.getNick(), channelList[i].getName(), this->_channels[m].getTopic()));
+						writeRPL(this->_channels[m].getClients()[n]->getFd(), RPL_NAMREPLY(client.getNick(), this->_channels[m].getName(), allNicks(this->_channels[m])));
+						writeRPL(this->_channels[m].getClients()[n]->getFd(), RPL_ENDOFNAMES(client.getNick(), channelList[i].getName()));
+					}
 				}
 			}
 		}
