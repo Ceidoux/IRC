@@ -2,6 +2,13 @@
 
 void	Server::invite( std::string line, Client & client )
 {
+	if (line.find("#") == std::string::npos)
+	{
+		//channel name starts after secound space found
+		std::string channel = line.substr(line.find(" ", line.find(" ") + 1) + 1, line.find(" ", line.find(" ", line.find(" ") + 1) + 1) - line.find(" ", line.find(" ") + 1) - 1);
+		writeRPL(client.getFd(), ERR_NOSUCHCHANNEL(client.getNick(), channel));
+		return;
+	}
 	std::string channel = line.substr(line.find("#"), line.find(" ", line.find("#")) - line.find("#"));
 	std::cout << "channel: " << channel << std::endl;
 	std::size_t i = 0;
@@ -30,10 +37,23 @@ void	Server::invite( std::string line, Client & client )
 		writeRPL(client.getFd(), ERR_NOTONCHANNEL(client.getNick(), channel));
 		return;
 	}
-
 	std::string invitedNick = line.substr(line.find(" ") + 1, line.find(" ", line.find(" ") + 1) - line.find(" ") - 1);
 	std::cout << "invitedNick: " << invitedNick << std::endl;
-	
+	// si dejadans le channel le dire
+	for (std::size_t i = 0; i < this->_channels.size(); i++)
+	{
+		if (this->_channels[i].getName() == channel)
+		{
+			for (std::size_t j = 0; j < this->_channels[i].getClients().size(); j++)
+			{
+				if (this->_channels[i].getClients()[j]->getNick() == invitedNick)
+				{
+					writeRPL(client.getFd(), ERR_USERONCHANNEL(client.getNick(), channel));
+					return;
+				}
+			}
+		}
+	}
 	j = 0;
 	while (j < this->_clients.size())
 	{
