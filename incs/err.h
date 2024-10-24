@@ -18,5 +18,6 @@
 # define ERR_CHANOPRIVSNEEDED(nick, channel)		        ":localhost 482 " + nick + " " + channel + " :You're not channel operator\r\n"
 # define ERR_INVALIDKEY(nick, channel)				        ":localhost 525 " + nick + " " + channel + " :Key is not well-formed\r\n"
 # define ERR_INVALIDMODEPARAM(nick, target, mode, param)    ":localhost 696 " + nick + " " + target + " " + mode + " " + param + " :Invalid MODE parameter\r\n"
+# define ERR_USERONCHANNEL(nick, channel)			        ":localhost 443 " + nick + " " + channel + " :is already on channel\r\n"
 
 #endif
