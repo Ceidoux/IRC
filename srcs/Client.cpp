@@ -34,13 +34,13 @@ Client::~Client( void ) { }
 
 bool Client::validNick( std::string nick )
 {
-	char	forbiddenCharacter[6] = {' ', ',', '*', '?', '!', '@'};
-	char	forbiddenFirstCharacter[4] = {'$', ':', '#', '&'};
+	char	forbiddenCharacter[7] = {' ', ',', '*', '?', '!', '@', '#'};
+	char	forbiddenFirstCharacter[3] = {'$', ':', '&'};
 
-	for (int i = 0; i < 6; ++i)
+	for (int i = 0; i < 7; ++i)
 		if (std::find(nick.begin(), nick.end(), forbiddenCharacter[i]) != nick.end())
 			return false;
-	for (int i = 0; i < 4; ++i)
+	for (int i = 0; i < 3; ++i)
 		if (nick[0] == forbiddenFirstCharacter[i])
 			return false;
 	if (std::find(nick.begin(), nick.end(), '.') != nick.end())
