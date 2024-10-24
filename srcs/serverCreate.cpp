@@ -139,8 +139,8 @@ void Server::clientRegistration( std::string command, Client & myClient, int cli
 			writeRPL(myClient.getFd(), ERR_ERRONEUSNICKNAME(command.substr(5)));
 		else if (checkNickCollision(command.substr(5)))
 		{
-			writeRPL(myClient.getFd(), ERR_NICKCOLLISION(command.substr(5)));
-			writeRPL(myClient.getFd(), RPL_KILL(command.substr(5), "make sure to change your nick"));
+			writeRPL(myClient.getFd(), ERR_NICKNAMEINUSE(command.substr(5)));
+			writeRPL(myClient.getFd(), RPL_KILL(command.substr(5), ""));
 			myClient.eraseAttributes();
 			close(this->_fds[clientIdx].fd);
 			this->_fds[clientIdx].fd = 0;
